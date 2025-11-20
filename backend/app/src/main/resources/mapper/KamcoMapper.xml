@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.app.kamco.mapper.KamcoMapper">
+
+    <insert id="insertUpdateFavorite" parameterType="KamcoMyDto">
+    <![CDATA[
+        MERGE INTO KAMCO_MY_DATA A
+        USING (
+            SELECT
+                #{userId} AS USER_ID,
+                #{cltrMnmtNo} AS CLTR_MNMT_NO,
+                #{cltrHstrNo} AS CLTR_HSTR_NO,
+                #{isFavorite} AS IS_FAVORITE,
+                #{cltrNm} AS CLTR_NM,
+                #{ctgrFullNm} AS CTGR_FULL_NM,
+                #{pbctBegnDtm} AS PBCT_BEGN_DTM,
+                #{pbctClsDtm} AS PBCT_CLS_DTM,
+                #{feeRate} AS FEE_RATE
+            FROM DUAL
+        ) B
+        ON (A.USER_ID = B.USER_ID AND A.CLTR_MNMT_NO = B.CLTR_MNMT_NO AND A.CLTR_HSTR_NO = B.CLTR_HSTR_NO)
+        WHEN MATCHED THEN
+            UPDATE SET
+                A.IS_FAVORITE = B.IS_FAVORITE
+        WHEN NOT MATCHED THEN
+            INSERT (USER_ID, CLTR_MNMT_NO, CLTR_HSTR_NO, IS_FAVORITE, CLTR_NM, CTGR_FULL_NM, PBCT_BEGN_DTM, PBCT_CLS_DTM, FEE_RATE)
+            VALUES (B.USER_ID, B.CLTR_MNMT_NO, B.CLTR_HSTR_NO, B.IS_FAVORITE, B.CLTR_NM, B.CTGR_FULL_NM, B.PBCT_BEGN_DTM, B.PBCT_CLS_DTM, B.FEE_RATE)
+    ]]>
+    </insert>
+    
+    <insert id="insertUpdateBid" parameterType="KamcoMyDto">
+    <![CDATA[
+        MERGE INTO KAMCO_MY_DATA A
+        USING (
+            SELECT
+                #{userId} AS USER_ID,
+                #{cltrMnmtNo} AS CLTR_MNMT_NO,
+                #{cltrHstrNo} AS CLTR_HSTR_NO,
+                #{isBid} AS IS_BID,
+                #{bidAmount} AS BID_AMOUNT,
+                #{cltrNm} AS CLTR_NM,
+                #{ctgrFullNm} AS CTGR_FULL_NM,
+                #{pbctBegnDtm} AS PBCT_BEGN_DTM,
+                #{pbctClsDtm} AS PBCT_CLS_DTM,
+                #{feeRate} AS FEE_RATE 
+            FROM DUAL
+        ) B
+        ON (A.USER_ID = B.USER_ID AND A.CLTR_MNMT_NO = B.CLTR_MNMT_NO AND A.CLTR_HSTR_NO = B.CLTR_HSTR_NO)
+        WHEN MATCHED THEN
+            UPDATE SET
+                A.IS_BID = B.IS_BID,
+                A.BID_AMOUNT = B.BID_AMOUNT
+        WHEN NOT MATCHED THEN
+            INSERT (USER_ID, CLTR_MNMT_NO, CLTR_HSTR_NO, IS_BID, BID_AMOUNT, CLTR_NM, CTGR_FULL_NM, PBCT_BEGN_DTM, PBCT_CLS_DTM, FEE_RATE)
+            VALUES (B.USER_ID, B.CLTR_MNMT_NO, B.CLTR_HSTR_NO, B.IS_BID, B.BID_AMOUNT, B.CLTR_NM, B.CTGR_FULL_NM, B.PBCT_BEGN_DTM, B.PBCT_CLS_DTM, B.FEE_RATE)
+    ]]>
+    </insert>
+    
+    <select id="selectMyDataStatus" resultType="KamcoMyDto"><![CDATA[
+		SELECT
+		*
+		FROM
+		KAMCO_MY_DATA
+		WHERE USER_ID = #{userId}
+		AND CLTR_MNMT_NO = #{cltrMnmtNo}
+		AND CLTR_HSTR_NO = #{cltrHstrNo}
+		ORDER BY CLTR_MNMT_NO DESC, CLTR_HSTR_NO ASC
+    ]]></select>
+    
+    <select id="selectMyDataList" parameterType="KamcoMyDto" resultType="KamcoMyDto">
+    	SELECT * FROM KAMCO_MY_DATA
+    	<where> 
+    	AND USER_ID = #{userId}
+    	
+    	<if test="cltrNm != null and cltrNm != ''"><![CDATA[ 
+    		AND CLTR_NM LIKE '%'||#{cltrNm, jdbcType=VARCHAR}||'%'
+    	]]></if>
+    	<if test="selectGbn == '' or selectGbn == null" ><![CDATA[ 
+    		AND (IS_BID = 'Y' OR IS_FAVORITE = 'Y')
+    	]]></if>
+    	<if test="selectGbn == 'bid'" ><![CDATA[ 
+    		AND IS_BID = 'Y'
+    	]]></if>
+    	<if test="selectGbn == 'favorite'" ><![CDATA[ 
+    		AND IS_FAVORITE = 'Y'
+    	]]></if>
+    	</where>
+    	ORDER BY CLTR_MNMT_NO DESC, CLTR_HSTR_NO DESC, BID_AMOUNT ASC
+    </select>
+    
+</mapper>
