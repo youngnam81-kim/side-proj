@@ -1,6 +1,12 @@
 # gov-bid-app
-
 # side-proj
+
+<img width="2841" height="1454" alt="image" src="https://github.com/user-attachments/assets/b5bfa034-bb7e-41ed-9def-17922f87f305" />
+
+<img width="2879" height="1451" alt="image" src="https://github.com/user-attachments/assets/c50d4c29-1a1a-4f2b-944c-0a1eb31e9724" />
+
+<img width="2842" height="1453" alt="image" src="https://github.com/user-attachments/assets/72eeccc0-dffb-40e6-9ed3-aba00b107bb2" />
+
 
 # 프로젝트 기획서
 
